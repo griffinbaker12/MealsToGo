@@ -1,11 +1,13 @@
-import { useContext } from 'react';
-import { FlatList } from 'react-native';
+import { useContext, useState } from 'react';
+import { FlatList, TouchableOpacity } from 'react-native';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import { RestaurantsContext } from '../../../services/restaurant/restaurants.context';
+import { FavoritesContext } from '../../../services/favorites/favorites.context';
 import RestaurantInfo from '../components/restaurant-info-card.component';
 import SafeArea from '../../../components/safe-area/safe-area.component';
 import styled from 'styled-components/native';
 import Search from '../components/search.component';
+import FavoritesBar from '../../../components/favorites/favorites-bar.component';
 
 // Because the content container style applies to the whole list and NOT each individual item, this will work great!
 const RestaurantsList = styled(FlatList).attrs({
@@ -24,12 +26,20 @@ const LoadingContainer = styled.View`
   left: 50%;
 `;
 
-function RestaurantsScreen() {
-  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
+function RestaurantsScreen({ navigation }) {
+  const { isLoading, restaurants } = useContext(RestaurantsContext);
+  const { favorites } = useContext(FavoritesContext);
+  const [isToggled, setIsToggled] = useState(false);
 
   return (
     <SafeArea>
-      <Search />
+      <Search
+        isToggled={isToggled}
+        onToggle={() => setIsToggled(prevState => !prevState)}
+      />
+      {isToggled && (
+        <FavoritesBar navigation={navigation} favorites={favorites} />
+      )}
       {isLoading ? (
         <LoadingContainer>
           <Loading size={50} animating={true} color={Colors.black} />
@@ -38,7 +48,17 @@ function RestaurantsScreen() {
         <RestaurantsList
           data={restaurants}
           renderItem={({ item }) => {
-            return <RestaurantInfo restaurant={item} />;
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('RestaurantDetailScreen', {
+                    restaurant: item,
+                  })
+                }
+              >
+                <RestaurantInfo restaurant={item} />
+              </TouchableOpacity>
+            );
           }}
           keyExtractor={item => item.name}
         />
