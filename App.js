@@ -1,5 +1,3 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
 import {
@@ -14,28 +12,7 @@ import { FavoritesContextProvider } from './src/services/favorites/favorites.con
 import Navigation from './src/infra/navigation';
 import { AuthContextProvider } from './src/services/auth/auth.context';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyCeuhdEFYMcjHRAfl_5TqHgjrGqUFAVSss',
-  authDomain: 'mealstogo-cf96a.firebaseapp.com',
-  projectId: 'mealstogo-cf96a',
-  storageBucket: 'mealstogo-cf96a.appspot.com',
-  messagingSenderId: '179830039570',
-  appId: '1:179830039570:web:dad9a78e9595c996b064cb',
-};
-
-let auth;
-console.log(getApps());
-
-if (getApps().length < 1) {
-  const app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-} else {
-  auth = getAuth(getApp());
-}
-
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [oswaldLoaded] = useOswald({
     Oswald_400Regular,
   });
@@ -43,25 +20,15 @@ export default function App() {
     Lato_400Regular,
   });
 
-  useEffect(() => {
-    signInWithEmailAndPassword(auth, 'g@gmail.com', '123stuff')
-      .then(user => setIsAuthenticated(true))
-      .catch(e => console.error(e));
-  }, []);
-
   if (!oswaldLoaded || !latoLoaded) return null;
 
   return (
     <ThemeProvider theme={theme}>
-      <AuthContextProvider
-        auth={auth}
-        isAuthenticated={isAuthenticated}
-        setIsAuthenticated={setIsAuthenticated}
-      >
+      <AuthContextProvider>
         <FavoritesContextProvider>
           <LocationContextProvider>
             <RestaurantsContextProvider>
-              <Navigation isAuthenticated={isAuthenticated} />
+              <Navigation />
             </RestaurantsContextProvider>
           </LocationContextProvider>
         </FavoritesContextProvider>
