@@ -1,6 +1,12 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from 'firebase/auth';
 
 export const AuthContext = createContext();
 
@@ -27,6 +33,15 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
+  onAuthStateChanged(auth, usr => {
+    if (usr) {
+      setUser(usr);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  });
+
   const onLogin = (email, password) => {
     setIsLoading(true);
     signInWithEmailAndPassword(auth, email, password)
@@ -36,8 +51,30 @@ export const AuthContextProvider = ({ children }) => {
       })
       .catch(e => {
         setIsLoading(false);
-        setError(e);
+        setError(e.toString());
       });
+  };
+
+  const onRegister = (email, password, repeatedPassword) => {
+    if (password !== repeatedPassword) {
+      setError('Error: Passwords do not match');
+      return;
+    }
+    setIsLoading(true);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(user => {
+        setIsLoading(false);
+        setUser(user);
+      })
+      .catch(e => {
+        setIsLoading(false);
+        setError(e.toString());
+      });
+  };
+
+  const onLogout = () => {
+    setUser(null);
+    signOut(auth);
   };
 
   return (
@@ -48,6 +85,8 @@ export const AuthContextProvider = ({ children }) => {
         error,
         onLogin,
         isAuthenticated: !!user,
+        onRegister,
+        onLogout,
       }}
     >
       {children}

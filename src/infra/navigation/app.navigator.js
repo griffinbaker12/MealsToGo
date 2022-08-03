@@ -1,6 +1,8 @@
-import { Text } from 'react-native';
+import { useContext } from 'react';
+import { Text, Button } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { AuthContext } from '../../services/auth/auth.context';
 import SafeArea from '../../components/safe-area/safe-area.component';
 import RestaurantsNavigator from './restaurants.navigator';
 import MapScreen from '../../features/map/screens/map.screen';
@@ -27,9 +29,11 @@ function screenOptions({ route }) {
 }
 
 function SettingsScreen() {
+  const { onLogout } = useContext(AuthContext);
   return (
     <SafeArea>
       <Text>Settings</Text>
+      <Button title='log out' onPress={() => onLogout()}></Button>
     </SafeArea>
   );
 }
