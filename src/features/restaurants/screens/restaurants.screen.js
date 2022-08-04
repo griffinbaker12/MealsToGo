@@ -8,6 +8,7 @@ import SafeArea from '../../../components/safe-area/safe-area.component';
 import styled from 'styled-components/native';
 import Search from '../components/search.component';
 import FavoritesBar from '../../../components/favorites/favorites-bar.component';
+import FadeInView from '../../../components/animations/fade.animation';
 
 // Because the content container style applies to the whole list and NOT each individual item, this will work great!
 const RestaurantsList = styled(FlatList).attrs({
@@ -56,7 +57,9 @@ function RestaurantsScreen({ navigation }) {
                   })
                 }
               >
-                <RestaurantInfo restaurant={item} />
+                <FadeInView duration='1000'>
+                  <RestaurantInfo restaurant={item} />
+                </FadeInView>
               </TouchableOpacity>
             );
           }}
