@@ -6,12 +6,12 @@ import { RestaurantsContext } from '../../../services/restaurant/restaurants.con
 import MapCallout from '../components/map-callout.component';
 import Search from '../components/search.component';
 
-const Map = styled(MapView)`
+const MapWrapper = styled(MapView)`
   height: 100%;
   width: 100%;
 `;
 
-const MapScreen = ({ navigation }) => {
+const Map = ({ navigation }) => {
   const { location } = useContext(LocationContext);
   const { restaurants = [] } = useContext(RestaurantsContext);
   const [latDelta, setLatDelta] = useState(0);
@@ -29,42 +29,50 @@ const MapScreen = ({ navigation }) => {
   return (
     <>
       <Search />
-      {viewport ? (
-        <Map
-          region={{
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: latDelta,
-            longitudeDelta: 0.02,
-          }}
-        >
-          {restaurants.map(restaurant => {
-            return (
-              <MapView.Marker
-                key={restaurant.name}
-                title={restaurant.name}
-                coordinate={{
-                  latitude: restaurant.geometry.location.lat,
-                  longitude: restaurant.geometry.location.lng,
-                }}
+      <MapWrapper
+        region={{
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: latDelta,
+          longitudeDelta: 0.02,
+        }}
+      >
+        {restaurants.map(restaurant => {
+          return (
+            <MapView.Marker
+              key={restaurant.name}
+              title={restaurant.name}
+              coordinate={{
+                latitude: restaurant.geometry.location.lat,
+                longitude: restaurant.geometry.location.lng,
+              }}
+            >
+              <MapView.Callout
+                onPress={() =>
+                  navigation.navigate('RestaurantDetailScreen', {
+                    restaurant,
+                  })
+                }
               >
-                <MapView.Callout
-                  onPress={() =>
-                    navigation.navigate('RestaurantDetailScreen', {
-                      restaurant,
-                    })
-                  }
-                >
-                  <MapCallout restaurant={restaurant} />
-                </MapView.Callout>
-              </MapView.Marker>
-            );
-          })}
-        </Map>
-      ) : (
-        <Map />
-      )}
+                <MapCallout restaurant={restaurant} />
+              </MapView.Callout>
+            </MapView.Marker>
+          );
+        })}
+      </MapWrapper>
     </>
   );
 };
-export default MapScreen;
+export default MapScreen = ({ navigation }) => {
+  const { location } = useContext(LocationContext);
+  if (!location)
+    return (
+      <MapWrapper
+        region={{
+          latitude: 0,
+          longitude: 0,
+        }}
+      />
+    );
+  return <Map navigation={navigation} />;
+};

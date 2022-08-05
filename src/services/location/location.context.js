@@ -15,9 +15,11 @@ export const LocationContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     locationRequest(keyword.toLowerCase())
       .then(locationTransform)
       .then(result => {
+        setError(null);
         setLocation(result);
         setIsLoading(false);
       })

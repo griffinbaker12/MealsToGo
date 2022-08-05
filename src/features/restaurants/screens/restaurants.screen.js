@@ -9,6 +9,8 @@ import styled from 'styled-components/native';
 import Search from '../components/search.component';
 import FavoritesBar from '../../../components/favorites/favorites-bar.component';
 import FadeInView from '../../../components/animations/fade.animation';
+import { LocationContext } from '../../../services/location/location.context';
+import { Text } from '../../../components/typography/typography.component';
 
 // Because the content container style applies to the whole list and NOT each individual item, this will work great!
 const RestaurantsList = styled(FlatList).attrs({
@@ -27,8 +29,15 @@ const LoadingContainer = styled.View`
   left: 50%;
 `;
 
+const ErrorContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: 20%;
+`;
+
 function RestaurantsScreen({ navigation }) {
-  const { isLoading, restaurants } = useContext(RestaurantsContext);
+  const { isLoading, restaurants, error } = useContext(RestaurantsContext);
+  const { error: locationError } = useContext(LocationContext);
   const { favorites } = useContext(FavoritesContext);
   const [isToggled, setIsToggled] = useState(false);
 
@@ -45,6 +54,10 @@ function RestaurantsScreen({ navigation }) {
         <LoadingContainer>
           <Loading size={50} animating={true} color={Colors.black} />
         </LoadingContainer>
+      ) : error || locationError ? (
+        <ErrorContainer>
+          <Text variant='error'>Error retrieving the data</Text>
+        </ErrorContainer>
       ) : (
         <RestaurantsList
           data={restaurants}
