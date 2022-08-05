@@ -31,6 +31,7 @@ const RestaurantInfo = ({ restaurant = {} }) => {
   } = restaurant;
   const ratingArray = Array.from(new Array(Math.round(rating)));
 
+  console.log(photos[0]);
   return (
     <RestaurantCard elevation={5}>
       <Favorite restaurant={restaurant} />

@@ -1,12 +1,8 @@
 import camelize from 'camelize';
-import { locations } from './location.mock';
+import { host } from '../../utils/env';
 
 export const locationRequest = searchTerm => {
-  return new Promise((res, rej) => {
-    const locationMock = locations[searchTerm];
-    if (!locationMock) rej('not found');
-    else res(locationMock);
-  });
+  return fetch(`${host}/geocode?city=${searchTerm}`).then(res => res.json());
 };
 
 export const locationTransform = ({ results }) => {
@@ -14,3 +10,6 @@ export const locationTransform = ({ results }) => {
   const { lat, lng } = geometry.location;
   return { lat, lng, viewport: geometry.viewport };
 };
+
+// key=API_KEY
+// AIzaSyA3DDgoQWrZqSuV87AB83uIHcGIjFD_CU4

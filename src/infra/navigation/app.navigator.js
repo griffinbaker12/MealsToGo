@@ -41,10 +41,11 @@ const AppNavigator = () => {
               tabStyle: { paddingTop: 5 },
               labelStyle: { marginTop: 2 },
             }}
+            initialRouteName='Restaurants'
           >
-            <Tab.Screen name='Settings' component={SettingsNavigator} />
-            <Tab.Screen name='Restaurants' component={RestaurantsNavigator} />
             <Tab.Screen name='Map' component={MapScreen} />
+            <Tab.Screen name='Restaurants' component={RestaurantsNavigator} />
+            <Tab.Screen name='Settings' component={SettingsNavigator} />
           </Tab.Navigator>
         </RestaurantsContextProvider>
       </LocationContextProvider>
